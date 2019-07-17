@@ -1,0 +1,67 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Interactive Map Showing the Location of Swimming Pools</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css"
+      integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
+      crossorigin="anonymous">
+    <script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js"
+      integrity="sha512-GffPMF3RvMeYyc1LWMHtK8EbPv0iNZ8/oTtHPx9/cc2ILxQ+u905qIwdpULaqDkyBKgOaB57QTMg7ztg8Jm2Og=="
+      crossorigin="anonymous"></script>
+    <script src="data.js"></script>
+    <style>
+      body {
+        margin: 0px;
+      }
+      html, body, #map {
+        height: 100%;
+        width: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="map"></div>
+    <script>
+      var redMarker = L.icon({
+        iconUrl: 'images/red_marker.png',
+        iconSize: [32, 37],
+        iconAnchor: [16, 35],
+        popupAnchor: [0, -35]
+      });
+      var orangeMarker = L.icon({
+        iconUrl: 'images/orange_marker.png',
+        iconSize: [32, 37],
+        iconAnchor: [16, 35],
+        popupAnchor: [0, -35]
+      });
+      var yellowMarker = L.icon({
+        iconUrl: 'images/yellow_marker.png',
+        iconSize: [32, 37],
+        iconAnchor: [16, 35],
+        popupAnchor: [0, -35]
+      });
+      var map = L.map('map');
+      L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© <a href="https://www.openstreetmap.org/">OpenStreetMap</a>'
+          + ' contributors (<a href="https://www.openstreetmap.org/copyright/">license</a>)'
+          + ' | <a href="https://mapicons.mapsmarker.com/">Map Icons Collection</a>'
+      }).addTo(map);
+      var geoJsonLayer = L.geoJSON(data, {
+        onEachFeature: function(feature, layer) {
+          switch (feature.properties.type) {
+            case 'public':
+              layer.setIcon(redMarker);
+              break;
+            case 'private':
+              layer.setIcon(orangeMarker);
+              break;
+            case 'education':
+              layer.setIcon(yellowMarker);
+          }
+          layer.bindPopup(feature.properties.name);
+        }
+      }).addTo(map);
+      map.fitBounds(geoJsonLayer.getBounds());
+    </script>
+  </body>
+</html>
